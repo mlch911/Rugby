@@ -32,7 +32,7 @@ extension String {
     }
 }
 
-private extension NSRegularExpression {
+extension NSRegularExpression {
     func firstMatch(_ string: String) -> NSTextCheckingResult? {
         let range = NSRange(string.startIndex..., in: string)
         return firstMatch(in: string, range: range)

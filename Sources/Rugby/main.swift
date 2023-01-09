@@ -17,7 +17,8 @@ struct Rugby: ParsableCommand {
             Rollback.self,
             Log.self,
             Doctor.self,
-            Clean.self
+            Clean.self,
+			Check.self,
         ],
         defaultSubcommand: Plans.self
     )
