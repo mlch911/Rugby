@@ -33,6 +33,12 @@ struct CheckStep: Step {
 	}
 	
 	func run(_ input: Void) throws {
+		let project = try progress.spinner("Read project") {
+			try ProjectProvider.shared.readProject(.podsProject)
+		}
+		let projectPatched = project.pbxproj.main.contains(buildSettingsKey: .rugbyPatched)
+		guard projectPatched else { return }
+		
 		let cache = CacheManager().load()
 		let localPods = try PodsProvider.shared.localPods()
 		guard let checksums = cache?.values.first?.checksumsMap() else { return }
