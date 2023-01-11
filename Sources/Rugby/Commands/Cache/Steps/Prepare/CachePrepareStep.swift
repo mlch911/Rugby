@@ -59,7 +59,7 @@ extension CachePrepareStep {
         try backupManager.backup(path: .podsProject)
         let factory = CacheSubstepFactory(progress: progress, command: command, metrics: metrics)
         let (selectedPods, excludedPods) = try factory.selectPods(project)
-        let (buildInfo, swiftVersion) = try factory.findBuildPods(selectedPods)
+        let (buildInfo, swiftVersion, removedPods) = try factory.findBuildPods(selectedPods)
         var (selectedTargets, buildTargets) = try factory.buildTargets((project: project,
                                                                         selectedPods: selectedPods,
                                                                         buildPods: buildInfo.pods))
@@ -70,7 +70,27 @@ extension CachePrepareStep {
         let targets = selectedPods
             .union(selectedTargets.map(\.name))
             .union(selectedTargets.compactMap(\.productName))
-
+		
+		if !removedPods.isEmpty, buildTargets.isEmpty {
+			try progress.spinner("Remove checksums which is removed from cache") {
+				let cacheManager = CacheManager()
+				for (sdk, _) in zip(command.sdk, command.arch) {
+					let cachedChecksums = cacheManager.checksumsMap(sdk: sdk, config: command.config)
+					var newChecksums = cachedChecksums
+					removedPods.forEach { newChecksums.removeValue(forKey:$0) }
+					let checksums = newChecksums.map(\.value.string).sorted()
+					guard let cache = cacheManager.load(sdk: sdk, config: command.config) else { return }
+					let newCache = BuildCache(sdk: cache.sdk,
+											  arch: cache.arch,
+											  config: cache.config,
+											  swift: cache.swift,
+											  xcargs: cache.xcargs,
+											  checksums: checksums)
+					try cacheManager.update(cache: newCache)
+				}
+			}
+		}
+		
         done()
         return Output(scheme: buildTargets.isEmpty ? nil : buildTarget,
                       targets: targets,

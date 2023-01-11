@@ -26,7 +26,8 @@ extension CacheSubstepFactory {
 
         func run(_ selectedPods: Set<String>) throws -> (
             buildInfo: BuildInfo,
-            swiftVersion: String?
+            swiftVersion: String?,
+			removedPods: Set<String>
         ) {
             let focusChecksums = try progress.spinner("Calculate checksums") {
                 try checksumsProvider.getChecksums(forPods: selectedPods)
@@ -39,6 +40,7 @@ extension CacheSubstepFactory {
             let swiftVersion = SwiftVersionProvider().swiftVersion()
             var buildSDKs: [SDK] = []
             var buildARCHs: [String] = []
+			var removedPods: Set<String> = []
             for (sdk, arch) in zip(command.sdk, command.arch) {
                 let cache = CacheManager().load(sdk: sdk, config: command.config)
                 let invalidCache = (
@@ -51,6 +53,8 @@ extension CacheSubstepFactory {
                     let changes = focusChecksums.filter { checksums[$0.name]?.value != $0.value }
                     let changedPods = changes.map(\.name)
                     buildPods.formUnion(changedPods)
+					let lastPods = Set(checksums.keys)
+					removedPods.formUnion(lastPods.subtracting(focusChecksums.map(\.name)))
                 } else {
                     buildPods.formUnion(selectedPods)
                 }
@@ -59,7 +63,7 @@ extension CacheSubstepFactory {
                     buildARCHs.append(arch)
                 }
             }
-            return (BuildInfo(pods: buildPods, sdk: buildSDKs, arch: buildARCHs), swiftVersion)
+            return (BuildInfo(pods: buildPods, sdk: buildSDKs, arch: buildARCHs), swiftVersion, removedPods)
         }
     }
 }
