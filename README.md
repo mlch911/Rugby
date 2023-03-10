@@ -13,7 +13,7 @@
   <img src="https://img.shields.io/badge/Press_★_to_pay_respects-44494E?logo=github&logoColor=white" />
   <a href="https://twitter.com/swiftyfinch"><img src="https://img.shields.io/badge/SwiftyFinch-blue?logo=twitter&logoColor=white" /></a>
   <br>
-  <a href="https://github.com/swiftyfinch/Rugby/releases/tag/2.0.0b2"><img src="https://img.shields.io/badge/Early_Beta_Available-4BA057" /></a>
+  <a href="https://github.com/swiftyfinch/Rugby/releases/tag/2.0.0b6"><img src="https://img.shields.io/badge/Release_Candidate_Available-4BA057" /></a>
 </p>
 
 
@@ -60,10 +60,10 @@ brew install rugby
 ```
 More information 🎬 [here](https://github.com/swiftyfinch/Rugby/discussions/71).
 
-## 🏈 Rugby Remastered <a href="https://github.com/swiftyfinch/Rugby/releases/tag/2.0.0b2"><img src="https://img.shields.io/badge/Early_Beta_Available-4BA057" /></a>
+## 🏈 Rugby Remastered <a href="https://github.com/swiftyfinch/Rugby/releases/tag/2.0.0b6"><img src="https://img.shields.io/badge/Release_Candidate_Available-4BA057" /></a>
 
-You can find all information in [readme](https://github.com/swiftyfinch/Rugby/tree/beta#readme).<br>
-📦 The first pre-release is already [here](https://github.com/swiftyfinch/Rugby/releases/tag/2.0.0b2).
+You can find all information in the [readme](https://github.com/swiftyfinch/Rugby/tree/beta#readme).<br>
+📦 The latest pre-release is [here](https://github.com/swiftyfinch/Rugby/releases/tag/2.0.0b6).
 
 <br>
 
@@ -101,7 +101,7 @@ Read more [about advanced usage](Docs/Plans.md#-generate-example).
 ###### 📮 Support
 
 If you want to support this project, you can do some of these:\
-`1)` <ins><b>Press</b></ins> ⭐️. It's a great pointer that Rugby is useful;\
+`1)` <ins><b>Press</b></ins> ⭐️. It's a great sign that Rugby is useful;\
 `2)` <ins><b>Share</b></ins> the project 🌍 somewhere with anybody;\
 `3)` <ins><b>Leave feedback</b></ins> in the discussions 💬 section.
 
