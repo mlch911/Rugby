@@ -50,7 +50,7 @@ struct CheckStep: Step {
 			progress.print("[Check Passed]")
 			done()
 		} else {
-			progress.print("[Check Failed] Found changed Pod: \(changedPods) in Cache.")
+			progress.print("[Check Failed] Found changed Pod: \(changedPods) in Cache.", level: 0)
 			throw CheckError.checkFail
 		}
 	}
