@@ -17,6 +17,7 @@ struct LocalCache: ParsableCommand {
 		@Flag(name: .shortAndLong, help: "Run Rugby Check before Local Cache.") var precheck = false
 		@Flag(help: .beta("Check option. Use content checksums instead of modification date. Should be the same with your cache command option."))
 		var useContentChecksums = false
+		@Flag(help: "Ignore local pods which git is dirty.\n") var ignoreGitDirtyLocalPods = false
 		
 		@Option(name: .shortAndLong, help: "Project Name. This will be used to group the Local cache. Should not set this if you don't know what you're doning. Automatically find name if nil") var projectName: String?
 		@Option(name: .shortAndLong, help: "Main Project Location. Just for find project name. Automatically find location if nil") var mainProjectLocation: String?

@@ -72,11 +72,19 @@ struct LocalCacheSaveStep: Step {
 			let remoteFolder = try remoteLocation.createSubfolderIfNeeded(withName: cache.LocalCacheFolderName())
 			let sourceFolder = try Folder(path: .buildFolder).subfolder(named: name)
 			let frameworkFolder = try? sourceFolder.subfolder(named: .buildFrameworkFolder)
-			let savedPod = try PodsProvider.shared.pods().filter { pod in
+			let savedPod = try PodsProvider.shared.pods()
+				.filter {
+					if let pod = $0 as? LocalPod, options.ignoreGitDirtyLocalPods {
+						return pod.isGitClean
+					}
+					return true
+				}
+				.filter { pod in
 				let copyFramework = try copyFrameworkIfNeed(pod: pod, remoteFolder: remoteFolder, frameworkFolder: frameworkFolder)
 				let copyPod = try copyPodIfNeed(pod: pod, remoteFolder: remoteFolder, sourceFolder: sourceFolder)
 				return copyFramework || copyPod
 			}
+			progress.print("Saved \(savedPod.count) pods.", level: 0)
 		}
 		done()
 	}

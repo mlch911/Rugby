@@ -34,6 +34,7 @@ struct LocalCacheOptionsDecodable: Decodable {
 	let location: String?
 	let precheck: Bool?
 	let useContentChecksums: Bool?
+	let ignoreGitDirtyLocalPods: Bool?
 	
 	let projectName: String?
 	let mainProjectLocation: String?
@@ -91,6 +92,7 @@ extension LocalCache.Options {
 		self.location = decodable.location ?? "~/.rugby_cache/"
 		self.precheck = decodable.precheck ?? false
 		self.useContentChecksums = decodable.useContentChecksums ?? false
+		self.ignoreGitDirtyLocalPods = decodable.ignoreGitDirtyLocalPods ?? false
 		self.projectName = decodable.projectName
 		self.mainProjectLocation = decodable.mainProjectLocation
 		self.sizeLimit = decodable.sizeLimit
