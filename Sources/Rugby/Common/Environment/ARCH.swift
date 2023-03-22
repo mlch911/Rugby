@@ -8,4 +8,5 @@
 enum ARCH: String {
     case x86_64
     case arm64
+	case generic
 }
