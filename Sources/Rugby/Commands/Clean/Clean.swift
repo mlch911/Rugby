@@ -9,7 +9,10 @@
 import ArgumentParser
 import Files
 
-struct Clean: ParsableCommand {
+struct Clean: ParsableCommand, Command {
+	var quiet: Bool = false
+	var nonInteractive: Bool = false
+	
     static var configuration = CommandConfiguration(
         abstract: "• Remove cache except \("plans.yml".yellow) and logs."
     )
@@ -19,6 +22,11 @@ struct Clean: ParsableCommand {
             try CleanStep().run()
         }
     }
+	
+	mutating func run(logFile: Files.File) throws -> Metrics? {
+		try run()
+		return nil
+	}
 }
 
 // MARK: - CleanStep

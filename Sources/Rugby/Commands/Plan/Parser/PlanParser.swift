@@ -39,7 +39,7 @@ struct PlanParser {
 
 extension PlanParser {
     private enum Commands: String {
-        case cache, focus, drop, shell, plans, rollback, local_cache
+        case cache, focus, drop, shell, plans, rollback, local_cache, clean
     }
 
     private func parseCommand(_ dictionary: [String: Any]) throws -> Command {
@@ -70,6 +70,8 @@ extension PlanParser {
 		case .local_cache:
 			let decodable = try JSONDecoder().decode(LocalCacheDecodable.self, from: dataArguments)
 			return try LocalCache.command(from: decodable)
+		case .clean:
+			return Clean()
         }
     }
 
