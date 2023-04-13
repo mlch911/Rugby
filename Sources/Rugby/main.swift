@@ -8,7 +8,7 @@ struct Rugby: ParsableCommand {
         📖 \("https://github.com/swiftyfinch/Rugby".cyan)
         (⌘ + double click on the link)
         """,
-        version: "1.30.2",
+        version: "1.30.3",
         subcommands: [
             Plans.self,
             Cache.self,
