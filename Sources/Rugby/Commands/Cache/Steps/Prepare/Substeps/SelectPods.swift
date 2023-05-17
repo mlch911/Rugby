@@ -17,10 +17,17 @@ extension CacheSubstepFactory {
         let podsProvider = PodsProvider.shared
 
         func run(_ project: XcodeProj) throws -> (selected: Set<String>, excluded: Set<String>) {
-            let pods: Set<String>
+            var pods: Set<String>
             if !command.focus.isEmpty {
                 let allPods = try podsProvider.podsNames()
                 pods = allPods.subtracting(command.focus)
+				if command.ignoreGitDirtyLocalPods {
+					let dirtyLocalPods = try podsProvider.pods()
+						.compactMap { $0 as? LocalPod }
+						.filter { !$0.isGitClean }
+						.map(\.name)
+					pods = pods.subtracting(dirtyLocalPods)
+				}
             } else if !command.include.isEmpty {
                 let remotePods = try podsProvider.remotePodsNames()
                 let localPods = try podsProvider.pods()
