@@ -113,7 +113,7 @@ struct LocalCacheFetchStep: Step {
 		let podLocalFolder = try localFolder.createSubfolderIfNeeded(withName: pod.name)
 		guard (try podRemoteFolder.contentChecksum()) != (try podLocalFolder.contentChecksum()) else { return false }
 		try podLocalFolder.deleteAllContent()
-		try podRemoteFolder.copyAllContent(to: podLocalFolder)
+		try podRemoteFolder.fetchPod(to: podLocalFolder, rootFolder: Folder.current)
 		return true
 	}
 	

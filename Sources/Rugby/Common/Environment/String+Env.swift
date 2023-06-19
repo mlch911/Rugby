@@ -59,4 +59,7 @@ extension String {
         "\(path)\(buildFolder)/\(cacheFolderName)"
     }
     static let relativeToPodsRootPath = "${PODS_ROOT}/../"
+	
+	static let moduleMapFileExtension = "modulemap"
+	static let rootPathPlacehoder = "###RUGBY_PROJECT_ROOT_PATH_PLACEHOLDER###"
 }

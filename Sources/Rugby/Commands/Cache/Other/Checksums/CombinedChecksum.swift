@@ -77,6 +77,7 @@ extension LocalPod: CombinedChecksum {
 
         var dates: [String] = []
         for case let url as URL in enumerator where !url.hasDirectoryPath {
+			guard url.pathExtension != .moduleMapFileExtension else { continue }
             let resources = try url.resourceValues(forKeys: [.attributeModificationDateKey])
             guard let date = resources.attributeModificationDate else { throw Error.cantGetModificationDate }
             let string = String(date.timeIntervalSinceReferenceDate)
@@ -105,6 +106,7 @@ extension LocalPod: CombinedChecksum {
         // 5% Other
         var checksums: [String] = []
         for case let url as URL in enumerator {
+			guard url.pathExtension != .moduleMapFileExtension else { continue }
 			let resolvedSymlinksUrl = url.resolvingSymlinksInPath()
 			guard FileManager.default.isReadableFile(atPath: resolvedSymlinksUrl.path),
 				  !resolvedSymlinksUrl.hasDirectoryPath else { continue }

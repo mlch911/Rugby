@@ -93,21 +93,24 @@ struct LocalCacheSaveStep: Step {
 		let podFolder = try remoteFolder.createSubfolderIfNeeded(withName: pod.name)
 		let podSourceFolder = try sourceFolder.subfolder(named: pod.name)
 		let podLastCachedFolder: Folder
+		let folderName = try podChecksum(pod)
 		
-		if podFolder.containsSubfolder(named: try podChecksum(pod)) {
-			podLastCachedFolder = try podFolder.subfolder(named: podChecksum(pod))
-			if (try podLastCachedFolder.contentChecksum()) == (try podSourceFolder.contentChecksum()) {
-				return false
-			} else {
+		if podFolder.containsSubfolder(named: folderName) {
+			podLastCachedFolder = try podFolder.subfolder(named: folderName)
+			if let pod = pod as? LocalPod,
+			   !options.useContentChecksums,
+			   (try podLastCachedFolder.contentChecksum()) != (try podSourceFolder.contentChecksum()) {
 				progress.print("[\(pod.name)]Previous cache pod is not valid. Rewrite it.", level: 0)
 				try podLastCachedFolder.deleteAllContent()
+			} else {
+				return false
 			}
 		} else {
 			podLastCachedFolder = try podFolder.createSubfolderIfNeeded(withName: podChecksum(pod))
 		}
 		
 		progress.print("Copy Cache:[\(pod.name)]", level: 0)
-		try podSourceFolder.copyAllContent(to: podLastCachedFolder)
+		try podSourceFolder.copyPod(to: podLastCachedFolder, rootFolder: Folder.current)
 		return true
 	}
 	

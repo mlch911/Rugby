@@ -30,8 +30,13 @@ extension Pod {
 }
 
 extension Folder {
-	func copyAllContent(to folder: Folder, override: Bool = false) throws {
+	typealias CopyFileEnumerator = (_ sourceFile: File, _ destinationFolder: Folder) throws -> Bool
+	
+	func copyAllContent(to folder: Folder, override: Bool = false, enumerator: CopyFileEnumerator? = nil) throws {
 		try files.forEach {
+			if let enumerator, try enumerator($0, folder) == false {
+				return
+			}
 			if folder.containsFile(named: $0.name) {
 				if override {
 					try folder.file(named: $0.name).delete()
@@ -43,13 +48,10 @@ extension Folder {
 		}
 		try subfolders.forEach {
 			if folder.containsSubfolder(named: $0.name) {
-				if override {
-					try folder.subfolder(named: $0.name).delete()
-				} else {
-					return
-				}
+				try $0.copyAllContent(to: folder.subfolder(named: $0.name), override: override)
+			} else {
+				try $0.copy(to: folder)
 			}
-			try $0.copy(to: folder)
 		}
 	}
 	
@@ -60,6 +62,40 @@ extension Folder {
 	
 	func contentChecksum() throws -> String {
 		try folderContentChecksum(url)
+	}
+	
+	func copyPod(to folder: Folder, rootFolder: Folder) throws {
+		try copyAllContent(to: folder) { sourceFile, destinationFolder in
+			if sourceFile.extension == "modulemap" {
+				var content = try sourceFile.readAsString()
+				if content.contains(rootFolder.path) {
+					content = content.replacingOccurrences(of: rootFolder.path, with: String.rootPathPlacehoder)
+					if folder.containsFile(named: sourceFile.name) {
+						try folder.file(named: sourceFile.name).delete()
+					}
+					try content.write(to: folder.url.appendingPathComponent(sourceFile.name), atomically: false, encoding: .utf8)
+					return false
+				}
+			}
+			return true
+		}
+	}
+	
+	func fetchPod(to folder: Folder, rootFolder: Folder) throws {
+		try copyAllContent(to: folder) { sourceFile, destinationFolder in
+			if sourceFile.extension == "modulemap" {
+				var content = try sourceFile.readAsString()
+				if content.contains(String.rootPathPlacehoder) {
+					content = content.replacingOccurrences(of: String.rootPathPlacehoder, with: rootFolder.path)
+					if folder.containsFile(named: sourceFile.name) {
+						try folder.file(named: sourceFile.name).delete()
+					}
+					try content.write(to: folder.url.appendingPathComponent(sourceFile.name), atomically: false, encoding: .utf8)
+					return false
+				}
+			}
+			return true
+		}
 	}
 }
 
@@ -86,6 +122,7 @@ private func folderContentChecksums(_ url: URL, deep: Bool) throws -> [String] {
 	// 5% Other
 	var checksums: [String] = []
 	for case let url as URL in enumerator {
+		guard url.pathExtension != .moduleMapFileExtension else { continue }
 		let resolvedSymlinksUrl = url.resolvingSymlinksInPath()
 		guard FileManager.default.isReadableFile(atPath: resolvedSymlinksUrl.path),
 			  !resolvedSymlinksUrl.hasDirectoryPath else { continue }
