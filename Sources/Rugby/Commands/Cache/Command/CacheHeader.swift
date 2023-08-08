@@ -31,6 +31,8 @@ struct Cache: ParsableCommand {
     @Flag(help: "Ignore already cached pods checksums.") var ignoreChecksums = false
     @Flag(help: .beta("Use content checksums instead of modification date.\n")) var useContentChecksums = false
     @Flag(help: "Ignore local pods which git is dirty.\n") var ignoreGitDirtyLocalPods = false
+	@Option(help: "Retry times after cache failure.\n") var retryCount = 1
+	@Option(help: "Only retry after failure in those strings. Default retry all failure.\n") var onlyRetryFailureString: [String] = []
 
     @OptionGroup var flags: CommonFlags
 

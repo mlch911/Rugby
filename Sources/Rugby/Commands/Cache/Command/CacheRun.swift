@@ -27,10 +27,35 @@ extension Cache: Command {
 
         let metrics = CacheMetrics(project: String.podsProject.basename())
         let factory = CacheStepsFactory(command: self, metrics: metrics, logFile: logFile)
-        let info = try factory.prepare(.buildTarget)
-        try factory.build(.init(scheme: info.scheme, buildInfo: info.buildInfo, swift: info.swiftVersion))
-        try factory.integrate(info.targets)
-        try factory.cleanup(.init(scheme: info.scheme, targets: info.targets, products: info.products))
+		let work = {
+			let info = try factory.prepare(.buildTarget)
+			try factory.build(.init(scheme: info.scheme, buildInfo: info.buildInfo, swift: info.swiftVersion))
+			try factory.integrate(info.targets)
+			try factory.cleanup(.init(scheme: info.scheme, targets: info.targets, products: info.products))
+		}
+		
+		if retryCount > 0 {
+			let logger = RugbyPrinter(title: "Cache_Retry", logFile: logFile, verbose: flags.verbose, quiet: flags.quiet, nonInteractive: flags.nonInteractive)
+			var count = 0
+			while count <= retryCount {
+				do {
+					try work()
+					break
+				} catch {
+					if !onlyRetryFailureString.isEmpty,
+					   onlyRetryFailureString.first(where: {
+						   error.beautifulDescription.contains($0)
+					   }) == nil {
+						throw error
+					}
+					count += 1
+					logger.print("Retry: \(count)/\(retryCount)".red, level: 1)
+				}
+			}
+		} else {
+			try work()
+		}
+        
         return metrics
     }
 }

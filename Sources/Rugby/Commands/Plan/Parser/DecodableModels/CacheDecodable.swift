@@ -20,7 +20,10 @@ struct CacheDecodable: Decodable {
     let graph: Bool?
     let offDebugSymbols: Bool?
     let useRelativePaths: Bool?
-    let bell: Bool?
+	let retryCount: Int?
+	let onlyRetryFailureString: [String]?
+	
+	let bell: Bool?
     let hideMetrics: Bool?
     @BoolableIntDecodable var verbose: Int?
     let quiet: Bool?
@@ -44,6 +47,8 @@ extension Cache {
         self.offDebugSymbols = decodable.offDebugSymbols ?? false
         self.useRelativePaths = decodable.useRelativePaths ?? false
         self.ignoreGitDirtyLocalPods = decodable.ignoreGitDirtyLocalPods ?? false
+		self.retryCount = decodable.retryCount ?? 0
+		self.onlyRetryFailureString = decodable.onlyRetryFailureString ?? []
 
         self.flags = .init()
         self.flags.bell = decodable.bell ?? true
