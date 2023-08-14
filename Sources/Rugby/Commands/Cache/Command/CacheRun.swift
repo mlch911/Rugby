@@ -35,7 +35,10 @@ extension Cache: Command {
 		}
 		
 		if retryCount > 0 {
-			let logger = RugbyPrinter(title: "Cache_Retry", logFile: logFile, verbose: flags.verbose, quiet: flags.quiet, nonInteractive: flags.nonInteractive)
+			let logger = RugbyPrinter(formatter: RugbyFormatter(title: "Cache_Retry"),
+						 screenPrinters: quiet ? [] : [DefaultPrinter(verbose: flags.verbose)],
+						 logPrinters: [FilePrinter(file: logFile)],
+						 spinnerMode: quiet ? .quiet : nonInteractive ? .simple : .standard)
 			var count = 0
 			while count <= retryCount {
 				do {
@@ -48,8 +51,13 @@ extension Cache: Command {
 					   }) == nil {
 						throw error
 					}
+					logger.print(error.beautifulDescription, level: 1)
 					count += 1
-					logger.print("Retry: \(count)/\(retryCount)".red, level: 1)
+					if count > retryCount {
+						throw error
+					} else {
+						logger.print("Retry: \(count)/\(retryCount)".red, level: 1)
+					}
 				}
 			}
 		} else {
