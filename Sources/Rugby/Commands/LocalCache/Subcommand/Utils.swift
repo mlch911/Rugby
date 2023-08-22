@@ -66,14 +66,14 @@ extension Folder {
 	
 	func copyPod(to folder: Folder, rootFolder: Folder) throws {
 		try copyAllContent(to: folder) { sourceFile, destinationFolder in
-			if sourceFile.extension == "modulemap" {
+			if sourceFile.extension == .moduleMapFileExtension {
 				var content = try sourceFile.readAsString()
 				if content.contains(rootFolder.path) {
 					content = content.replacingOccurrences(of: rootFolder.path, with: String.rootPathPlacehoder)
-					if folder.containsFile(named: sourceFile.name) {
-						try folder.file(named: sourceFile.name).delete()
+					if destinationFolder.containsFile(named: sourceFile.name) {
+						try destinationFolder.file(named: sourceFile.name).delete()
 					}
-					try content.write(to: folder.url.appendingPathComponent(sourceFile.name), atomically: false, encoding: .utf8)
+					try content.write(to: destinationFolder.url.appendingPathComponent(sourceFile.name), atomically: false, encoding: .utf8)
 					return false
 				}
 			}
@@ -83,14 +83,14 @@ extension Folder {
 	
 	func fetchPod(to folder: Folder, rootFolder: Folder) throws {
 		try copyAllContent(to: folder) { sourceFile, destinationFolder in
-			if sourceFile.extension == "modulemap" {
+			if sourceFile.extension == .moduleMapFileExtension {
 				var content = try sourceFile.readAsString()
 				if content.contains(String.rootPathPlacehoder) {
 					content = content.replacingOccurrences(of: String.rootPathPlacehoder, with: rootFolder.path)
-					if folder.containsFile(named: sourceFile.name) {
-						try folder.file(named: sourceFile.name).delete()
+					if destinationFolder.containsFile(named: sourceFile.name) {
+						try destinationFolder.file(named: sourceFile.name).delete()
 					}
-					try content.write(to: folder.url.appendingPathComponent(sourceFile.name), atomically: false, encoding: .utf8)
+					try content.write(to: destinationFolder.url.appendingPathComponent(sourceFile.name), atomically: false, encoding: .utf8)
 					return false
 				}
 			}
