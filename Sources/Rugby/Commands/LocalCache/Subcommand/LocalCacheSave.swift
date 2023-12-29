@@ -90,6 +90,7 @@ struct LocalCacheSaveStep: Step {
 	}
 	
 	private func copyPodIfNeed(pod: Pod, remoteFolder: Folder, sourceFolder: Folder) throws -> Bool {
+		guard sourceFolder.containsSubfolder(named: pod.name) else { return false }
 		let podFolder = try remoteFolder.createSubfolderIfNeeded(withName: pod.name)
 		let podSourceFolder = try sourceFolder.subfolder(named: pod.name)
 		let podLastCachedFolder: Folder

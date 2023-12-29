@@ -32,6 +32,7 @@ extension LocalCache {
 		mutating func run(logFile: Files.File) throws -> Metrics? {
 			let progress = RugbyPrinter(title: "LocalCacheFetch", verbose: flags.verbose, quiet: flags.quiet, nonInteractive: flags.nonInteractive)
 			try LocalCacheFetchStep(options: options, progress: progress, buildOptions: buildOptions).run()
+			try LocalCacheCleanStep(options: options, progress: progress, cleanAll: false).run()
 			return nil
 		}
 	}
