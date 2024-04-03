@@ -19,6 +19,7 @@ struct Rugby: ParsableCommand {
             Doctor.self,
             Clean.self,
 			Check.self,
+			LocalCache.self,
         ],
         defaultSubcommand: Plans.self
     )
